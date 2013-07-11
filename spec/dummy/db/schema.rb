@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(:version => 20130711174025) do
   end
 
   create_table "reservation_reservations", :force => true do |t|
-    t.integer  "time_slot_id"
+    t.integer  "event_id"
     t.string   "subject_type"
     t.integer  "subject_id"
     t.string   "reservation_status"
