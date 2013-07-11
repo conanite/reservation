@@ -19,6 +19,14 @@ ActiveRecord::Schema.define(:version => 20130711150809) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "reservation_events", :force => true do |t|
+    t.datetime "start"
+    t.datetime "finish"
+    t.string   "title"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "reservation_reservations", :force => true do |t|
     t.integer  "time_slot_id"
     t.string   "subject_type"
@@ -27,14 +35,6 @@ ActiveRecord::Schema.define(:version => 20130711150809) do
     t.string   "role"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
-  end
-
-  create_table "reservation_time_slots", :force => true do |t|
-    t.datetime "start"
-    t.datetime "finish"
-    t.string   "title"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
   end
 
   create_table "things", :force => true do |t|

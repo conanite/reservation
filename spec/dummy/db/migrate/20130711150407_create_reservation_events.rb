@@ -1,6 +1,6 @@
-class CreateReservationTimeSlots < ActiveRecord::Migration
+class CreateReservationEvents < ActiveRecord::Migration
   def change
-    create_table :reservation_time_slots do |t|
+    create_table :reservation_events do |t|
       t.datetime :start
       t.datetime :finish
       t.string :title

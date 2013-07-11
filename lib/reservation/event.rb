@@ -1,4 +1,4 @@
-class Reservation::TimeSlot < ActiveRecord::Base
+class Reservation::Event < ActiveRecord::Base
   has_many :reservations, :class_name => "Reservation::Reservation"
   attr_accessible :finish, :start, :title
 
