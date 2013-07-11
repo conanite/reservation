@@ -189,4 +189,108 @@ describe Reservation::Event do
       ee[2].reservations.map(&:subject).map(&:name).should == %w{ APPL Ulysses }
     end
   end
+
+  describe :build_weekly do
+    before { Time.zone = "Europe/Paris" }
+    let(:matt) { Person.create! :name => "matt" }
+    let(:here) { Place.create! :name => "here" }
+
+    def reservations
+      Reservation::Reservation.all.map { |r| "#{r.event.title} #{r.subject.name} #{r.event.start.strftime "%a,%Y%m%d:%H%M"} #{r.event.finish.strftime "%a,%Y%m%d:%H%M"} #{r.reservation_status}"}.join("\n")
+    end
+
+    it "should build a simple event for a single subject" do
+      subjects = [{ "role" => "owner", "subject" => matt, "status" => "confirmed" } ]
+      pattern = [ { "day" => "mon", "start" => "0930", "finish" => "1030"} ]
+      Reservation::Event.build_weekly "Titular", "2013-09-03", "2013-10-13", subjects, pattern
+      reservations.should == "Titular matt Mon,20130909:0930 Mon,20130909:1030 confirmed
+Titular matt Mon,20130916:0930 Mon,20130916:1030 confirmed
+Titular matt Mon,20130923:0930 Mon,20130923:1030 confirmed
+Titular matt Mon,20130930:0930 Mon,20130930:1030 confirmed
+Titular matt Mon,20131007:0930 Mon,20131007:1030 confirmed"
+    end
+
+    it "should build multiple events for multiple subjects" do
+      subjects = [{ "role" => "owner", "subject" => matt, "status" => "confirmed" }, { "role" => "place", "subject" => here, "status" => "tentative" }]
+      pattern = [ { "day" => "wed", "start" => "0930", "finish" => "1030"}, { "day" => "wed", "start" => "18", "finish" => "20"}, { "day" => "tue", "start" => "7", "finish" => "830"} ]
+      Reservation::Event.build_weekly "the_title", "2013-09-03", "2013-10-13", subjects, pattern
+      reservations.should == "the_title matt Tue,20130903:0700 Tue,20130903:0830 confirmed
+the_title here Tue,20130903:0700 Tue,20130903:0830 tentative
+the_title matt Wed,20130904:0930 Wed,20130904:1030 confirmed
+the_title here Wed,20130904:0930 Wed,20130904:1030 tentative
+the_title matt Wed,20130904:1800 Wed,20130904:2000 confirmed
+the_title here Wed,20130904:1800 Wed,20130904:2000 tentative
+the_title matt Tue,20130910:0700 Tue,20130910:0830 confirmed
+the_title here Tue,20130910:0700 Tue,20130910:0830 tentative
+the_title matt Wed,20130911:0930 Wed,20130911:1030 confirmed
+the_title here Wed,20130911:0930 Wed,20130911:1030 tentative
+the_title matt Wed,20130911:1800 Wed,20130911:2000 confirmed
+the_title here Wed,20130911:1800 Wed,20130911:2000 tentative
+the_title matt Tue,20130917:0700 Tue,20130917:0830 confirmed
+the_title here Tue,20130917:0700 Tue,20130917:0830 tentative
+the_title matt Wed,20130918:0930 Wed,20130918:1030 confirmed
+the_title here Wed,20130918:0930 Wed,20130918:1030 tentative
+the_title matt Wed,20130918:1800 Wed,20130918:2000 confirmed
+the_title here Wed,20130918:1800 Wed,20130918:2000 tentative
+the_title matt Tue,20130924:0700 Tue,20130924:0830 confirmed
+the_title here Tue,20130924:0700 Tue,20130924:0830 tentative
+the_title matt Wed,20130925:0930 Wed,20130925:1030 confirmed
+the_title here Wed,20130925:0930 Wed,20130925:1030 tentative
+the_title matt Wed,20130925:1800 Wed,20130925:2000 confirmed
+the_title here Wed,20130925:1800 Wed,20130925:2000 tentative
+the_title matt Tue,20131001:0700 Tue,20131001:0830 confirmed
+the_title here Tue,20131001:0700 Tue,20131001:0830 tentative
+the_title matt Wed,20131002:0930 Wed,20131002:1030 confirmed
+the_title here Wed,20131002:0930 Wed,20131002:1030 tentative
+the_title matt Wed,20131002:1800 Wed,20131002:2000 confirmed
+the_title here Wed,20131002:1800 Wed,20131002:2000 tentative
+the_title matt Tue,20131008:0700 Tue,20131008:0830 confirmed
+the_title here Tue,20131008:0700 Tue,20131008:0830 tentative
+the_title matt Wed,20131009:0930 Wed,20131009:1030 confirmed
+the_title here Wed,20131009:0930 Wed,20131009:1030 tentative
+the_title matt Wed,20131009:1800 Wed,20131009:2000 confirmed
+the_title here Wed,20131009:1800 Wed,20131009:2000 tentative"
+    end
+  end
+
+  describe :add_subject do
+    before { Time.zone = "Europe/Paris" }
+    let(:matt) { Person.create! :name => "matt" }
+    let(:bill) { Person.create! :name => "bill" }
+    let(:here) { Place.create! :name => "here" }
+
+    def reservations subject=nil
+      rr = if subject
+             Reservation::Reservation.where(:subject_type => subject.class.base_class.name, :subject_id => subject.id)
+           else
+             Reservation::Reservation.all
+           end
+      rr.map { |r| "#{r.event.title} #{r.subject.name} #{r.event.start.strftime "%a,%Y%m%d:%H%M"} #{r.event.finish.strftime "%a,%Y%m%d:%H%M"} #{r.reservation_status}"}.join("\n")
+    end
+
+    it "should add a subject within time constraints" do
+      subjects = [{ "role" => "owner", "subject" => matt, "status" => "confirmed" } ]
+      pattern = [ { "day" => "mon", "start" => "0930", "finish" => "1030"} ]
+      Reservation::Event.build_weekly "my_title", "2013-09-03", "2013-10-13", subjects, pattern
+      Reservation::Event.add_subject({ "role" => "student", "status" => "tentative", "subject" => bill}, { "from" => "2013-09-01", "upto" => "2013-09-24", "context_subject" => matt })
+      reservations.should == "my_title matt Mon,20130909:0930 Mon,20130909:1030 confirmed
+my_title matt Mon,20130916:0930 Mon,20130916:1030 confirmed
+my_title matt Mon,20130923:0930 Mon,20130923:1030 confirmed
+my_title matt Mon,20130930:0930 Mon,20130930:1030 confirmed
+my_title matt Mon,20131007:0930 Mon,20131007:1030 confirmed
+my_title bill Mon,20130909:0930 Mon,20130909:1030 tentative
+my_title bill Mon,20130916:0930 Mon,20130916:1030 tentative
+my_title bill Mon,20130923:0930 Mon,20130923:1030 tentative"
+    end
+
+    it "should add a subject within schedule contraints" do
+      subjects = [{ "role" => "owner", "subject" => matt, "status" => "confirmed" }, { "role" => "place", "subject" => here, "status" => "tentative" }]
+      pattern = [ { "day" => "wed", "start" => "0930", "finish" => "1030"}, { "day" => "wed", "start" => "18", "finish" => "20"}, { "day" => "tue", "start" => "7", "finish" => "830"} ]
+      Reservation::Event.build_weekly "the_title", "2013-09-03", "2013-10-13", subjects, pattern
+      add_pattern = [ { "day" => "wed", "start" => "18", "finish" => "20"} ]
+      Reservation::Event.add_subject({ "role" => "student", "status" => "tentative", "subject" => bill}, { "from" => "2013-09-17", "upto" => "2013-10-02", "pattern" => add_pattern })
+      reservations(bill).should == "the_title bill Wed,20130918:1800 Wed,20130918:2000 tentative
+the_title bill Wed,20130925:1800 Wed,20130925:2000 tentative"
+    end
+  end
 end
