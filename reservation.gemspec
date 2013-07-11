@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["conan@conandalton.net"]
   gem.description   = %q{A very basic reservation system using ActiveRecord}
   gem.summary       = %q{A very basic reservation system using ActiveRecord}
-  gem.homepage    = "TODO"
+  gem.homepage      = "http://github.com/conanite/reservation"
 
   gem.add_dependency             "rails", "~> 3.0"
   gem.add_dependency             'activerecord', '~> 3.0'
