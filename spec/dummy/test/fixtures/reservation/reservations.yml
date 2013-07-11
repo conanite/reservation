@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  time_slot_id: 1
+  subject_type: MyString
+  subject_id: 1
+  reservation_status: MyString
+  role: MyString
+
+two:
+  time_slot_id: 1
+  subject_type: MyString
+  subject_id: 1
+  reservation_status: MyString
+  role: MyString
