@@ -119,4 +119,74 @@ describe Reservation::Event do
       upto("1999-11-30T23:00:00").should == []
     end
   end
+
+  describe :reserved_for do
+    before {
+      @r1 = Reservation::Event.create! :start => time("1999-12-15T16:00:00"), :finish => time("1999-12-15T22:00:00"), :title => "r1"
+      @r2 = Reservation::Event.create! :start => time("1999-12-15T08:00:00"), :finish => time("1999-12-15T22:00:00"), :title => "r2"
+      @r3 = Reservation::Event.create! :start => time("1999-12-14T00:00:00"), :finish => time("1999-12-25T00:00:00"), :title => "r3"
+      @r4 = Reservation::Event.create! :start => time("1999-12-01T18:00:00"), :finish => time("1999-12-01T22:00:00"), :title => "r4"
+      @r5 = Reservation::Event.create! :start => time("1999-12-01T00:00:00"), :finish => time("1999-12-15T19:00:00"), :title => "r5"
+      @r6 = Reservation::Event.create! :start => time("1999-12-15T17:00:00"), :finish => time("1999-12-16T07:00:00"), :title => "r6"
+
+      @cafe = Place.create! :name => "Cafe"
+      @book = Thing.create! :name => "Ulysses"
+      @matt = Person.create! :name => "Matt"
+      @appl = Organisation.create! :name => "APPL"
+
+      Reservation::Reservation.create! :event => @r1, :subject => @cafe
+      Reservation::Reservation.create! :event => @r1, :subject => @matt
+
+      Reservation::Reservation.create! :event => @r2, :subject => @cafe
+      Reservation::Reservation.create! :event => @r2, :subject => @book
+
+      Reservation::Reservation.create! :event => @r3, :subject => @book
+      Reservation::Reservation.create! :event => @r3, :subject => @matt
+
+      Reservation::Reservation.create! :event => @r4, :subject => @matt
+      Reservation::Reservation.create! :event => @r4, :subject => @appl
+
+      Reservation::Reservation.create! :event => @r5, :subject => @appl
+      Reservation::Reservation.create! :event => @r5, :subject => @cafe
+
+      Reservation::Reservation.create! :event => @r6, :subject => @appl
+      Reservation::Reservation.create! :event => @r6, :subject => @book
+    }
+
+    def events who
+      Reservation::Event.reserved_for(who).order(:id)
+    end
+
+    it "should find events for Cafe" do
+      ee = events(@cafe)
+      ee.should == [@r1, @r2, @r5]
+      ee[0].reservations.map(&:subject).map(&:name).should == %w{ Cafe Matt }
+      ee[1].reservations.map(&:subject).map(&:name).should == %w{ Cafe Ulysses }
+      ee[2].reservations.map(&:subject).map(&:name).should == %w{ APPL Cafe }
+    end
+
+    it "should find events for Ulysses" do
+      ee = events(@book)
+      ee.should == [@r2, @r3, @r6]
+      ee[0].reservations.map(&:subject).map(&:name).should == %w{ Cafe Ulysses }
+      ee[1].reservations.map(&:subject).map(&:name).should == %w{ Ulysses Matt }
+      ee[2].reservations.map(&:subject).map(&:name).should == %w{ APPL Ulysses }
+    end
+
+    it "should find events for Matt" do
+      ee = events(@matt)
+      ee.should == [@r1, @r3, @r4]
+      ee[0].reservations.map(&:subject).map(&:name).should == %w{ Cafe Matt }
+      ee[1].reservations.map(&:subject).map(&:name).should == %w{ Ulysses Matt }
+      ee[2].reservations.map(&:subject).map(&:name).should == %w{ Matt APPL }
+    end
+
+    it "should find events for APPL" do
+      ee = events(@appl)
+      ee.should == [@r4, @r5, @r6]
+      ee[0].reservations.map(&:subject).map(&:name).should == %w{ Matt APPL }
+      ee[1].reservations.map(&:subject).map(&:name).should == %w{ APPL Cafe }
+      ee[2].reservations.map(&:subject).map(&:name).should == %w{ APPL Ulysses }
+    end
+  end
 end
