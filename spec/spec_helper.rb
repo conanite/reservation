@@ -27,6 +27,10 @@ module Helper
   def time t
     Time.parse t
   end
+
+  def make_interval start, finish
+    Reservation::Schedule::Interval.from start, finish
+  end
 end
 
 RSpec::Core::ExampleGroup.send :include, Helper
@@ -42,6 +46,10 @@ end
 class Time
   def pretty
     self.strftime("%Y%m%dT%H%M")
+  end
+
+  def prettyd
+    self.strftime("%a,%Y%m%dT%H%M")
   end
 end
 
