@@ -39,4 +39,9 @@ ActiveRecord::Base.silence do
   load(File.dirname(__FILE__) + '/dummy/db/schema.rb')
 end
 
+class Time
+  def pretty
+    self.strftime("%Y%m%dT%H%M")
+  end
+end
 

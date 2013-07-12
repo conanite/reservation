@@ -40,6 +40,6 @@ describe Reservation::Schedule::HourMinute do
   it "should change a date to a time with the given hour and minute" do
     hm = Reservation::Schedule::HourMinute.parse "815"
     time = hm.change date("2013-07-12")
-    time.strftime("%Y%m%dT%H%M").should == "20130712T0815"
+    time.pretty.should == "20130712T0815"
   end
 end
