@@ -102,6 +102,14 @@ module Reservation
         false
       end
 
+      def generate date, list
+        return list if date.wday != wday
+        intervals.inject(list) { |list, interval|
+          list << interval.generate(date)
+          list
+        }
+      end
+
       def to_s
         "#{MAP_DAY[wday]} => #{intervals}"
       end
