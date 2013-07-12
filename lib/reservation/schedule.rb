@@ -41,6 +41,10 @@ module Reservation
         new hh, mm
       end
 
+      def change date
+        date.to_time.change :hour => hour, :min => minute
+      end
+
       def to_s
         "#{hour.to_s.rjust 2, "0"}#{minute.to_s.rjust 2, "0"}"
       end
