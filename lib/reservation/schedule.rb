@@ -160,6 +160,21 @@ module Reservation
         wdays[event.start.wday].matches? event
       end
 
+      #
+      # generate a set of Events according to this Weekly schedule, starting
+      # on #from at the earliest, ending on #upto at the latest.
+      #
+      # Note: #upto is *inclusive*, this will generate events on #upto,
+      # if the schedule allows
+      #
+      def generate from, upto
+        events = []
+        from.upto(upto).map { |date|
+          wdays.each { |day| day.generate date, events }
+        }
+        events
+      end
+
       def to_s
         wdays.map(&:to_s).join "\n"
       end
