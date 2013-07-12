@@ -27,4 +27,11 @@ describe Reservation::Schedule::Interval do
     interval = Reservation::Schedule::Interval.new hm1, hm2
     interval.matches?(event).should be_false
   end
+
+  it "should generate a new Event with its start and finish times on the given date" do
+    interval = make_interval "1830", "2300"
+    event = interval.generate date('2013-07-12')
+    event.start.pretty.should  == "20130712T1830"
+    event.finish.pretty.should == "20130712T2300"
+  end
 end
