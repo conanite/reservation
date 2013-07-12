@@ -23,7 +23,24 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Objects associated with an event are called "subjects"; each event has many subjects, via an association
+model called Reservation::Reservation. The simplest way to create a bunch of events is to use Event#create_weekly.
+This will create a set of events, with the given subjects, within the given constraints, repeating weekly.
+
+    subjects = [ { "role" => "owner", "subject" => matt, "status" => "confirmed" },
+                 { "role" => "helpr", "subject" => bill, "status" => "tentative" },
+                 { "role" => "place", "subject" => here, "status" => "tentative" }
+               ]
+
+    pattern = [ { "day" => "wed", "start" => "0930", "finish" => "1030"},
+                { "day" => "wed", "start" => "18",   "finish" => "20"  },
+                { "day" => "tue", "start" => "7",    "finish" => "830" } ]
+
+    Reservation::Event.create_weekly "the_title", "2013-09-03", "2013-10-13", subjects, pattern
+
+You can use Reservation::Event#build_weekly instead in order to instantiate the object graph without
+persisting it.
+
 
 ## Contributing
 
