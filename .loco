@@ -1,0 +1,3 @@
+# -*- mode: ruby -*-
+
+Loco::Counter::EXCLUDE << /^spec\/dummy/
