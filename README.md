@@ -1,6 +1,11 @@
 # Reservation
 
-TODO: Write a gem description
+A gem for managing reservations. Provides the notion of "Event", which is basically an interval in time, and a
+"Reservation", which is a many-to-many association model between Event and your objects.
+
+There is no privileged event "owner", all associations are considered equivalent.
+
+This gem uses ActiveRecord to store events and reservations
 
 ## Installation
 
@@ -27,3 +32,8 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+
+## license
+
+MIT License
