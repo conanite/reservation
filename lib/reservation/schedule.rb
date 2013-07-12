@@ -1,5 +1,5 @@
 module Reservation
-  DAY_MAP = { "sun" => 0, "mon" => 1, "tue" => 2, "wed" => 3, "thu" => 4, "fri" => 5, "sat" => 6}
+  DAY_MAP = { "sun" => 0, "mon" => 1, "tue" => 2, "wed" => 3, "thu" => 4, "fri" => 5, "sat" => 6 }
 
   module Schedule
     #
@@ -53,6 +53,30 @@ module Reservation
 
       def matches? event
         start.matches_time?(event.start) && finish.matches_time?(event.finish)
+      end
+    end
+
+    #
+    # a utility class to represent a set of intervals on a single day
+    #
+    class Daily
+      attr_accessor :wday, :intervals
+
+      def initialize wday
+        @wday = wday
+        @intervals = []
+      end
+
+      def add interval
+        intervals << interval
+      end
+
+      def matches? event
+        return false if event.start.wday != self.wday
+        intervals.each { |interval|
+          return true if interval.matches? event
+        }
+        false
       end
     end
 
