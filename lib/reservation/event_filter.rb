@@ -19,7 +19,10 @@ module Reservation
       end
 
       if context
-        events = events.reserved_for(context) if context
+        context = [context] unless context.is_a? Array
+        events = context.inject(events) { |ee, ctx|
+          ee = ee.reserved_for(ctx)
+        }
       end
 
       if schedule
