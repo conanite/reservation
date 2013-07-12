@@ -8,6 +8,7 @@ module Reservation
   end
 end
 
+require "reservation/schedule"
 require "reservation/event"
 require "reservation/reservation"
 
