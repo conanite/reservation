@@ -55,4 +55,20 @@ Wed,20130717T1800 20130717T2000
 Fri,20130719T1000 20130719T1145
 Tue,20130723T0700 20130723T0830"
   end
+
+  it "should filter a set of events" do
+    weekly = Reservation::Schedule::Weekly.new [ { "day" => "wed", "start" => "0930", "finish" => "10:30"},
+                                                 { "day" => "wed", "start" => "18",   "finish" => "20"   },
+                                                 { "day" => "fri", "start" => "10h",   "finish" => "11:45" },
+                                                 { "day" => "tue", "start" => "7",    "finish" => "8h30" }  ]
+
+    events = weekly.generate date("2013-07-08"), date("2013-07-23")
+
+    filter = Reservation::Schedule::Weekly.new [ { "day" => "wed", "start" => "0930", "finish" => "10:30"} ]
+
+    events = filter.filter events
+    events.map { |e| "#{e.start.prettyd} #{e.finish.pretty}"}.join("\n").
+      should == "Wed,20130710T0930 20130710T1030
+Wed,20130717T0930 20130717T1030"
+  end
 end

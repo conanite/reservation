@@ -175,6 +175,14 @@ module Reservation
         events
       end
 
+      #
+      # return a new list including only those events in the given list
+      # that match this weekly schedule
+      #
+      def filter events
+        events.select { |e| matches? e }
+      end
+
       def to_s
         wdays.map(&:to_s).join "\n"
       end
