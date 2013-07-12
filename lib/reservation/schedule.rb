@@ -13,5 +13,16 @@ module Reservation
       end
     end
 
+    class Interval
+      attr_accessor :start, :finish
+
+      def initialize start, finish
+        @start, @finish = start, finish
+      end
+
+      def matches? event
+        start.matches_time?(event.start) && finish.matches_time?(event.finish)
+      end
+    end
   end
 end
