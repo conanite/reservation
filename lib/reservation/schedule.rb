@@ -1,5 +1,6 @@
 module Reservation
   DAY_MAP = { "sun" => 0, "mon" => 1, "tue" => 2, "wed" => 3, "thu" => 4, "fri" => 5, "sat" => 6 }
+  MAP_DAY = %w{ sun mon tue wed thu fri sat }
 
   module Schedule
     #
@@ -39,6 +40,10 @@ module Reservation
 
         new hh, mm
       end
+
+      def to_s
+        "#{hour.to_s.rjust 2, "0"}#{minute.to_s.rjust 2, "0"}"
+      end
     end
 
     #
@@ -53,6 +58,10 @@ module Reservation
 
       def matches? event
         start.matches_time?(event.start) && finish.matches_time?(event.finish)
+      end
+
+      def to_s
+        "#{start}-#{finish}"
       end
     end
 
@@ -78,7 +87,60 @@ module Reservation
         }
         false
       end
+
+      def to_s
+        "#{MAP_DAY[wday]} => #{intervals}"
+      end
     end
 
+    #
+    # Weekly defines a set of intervals that recur weekly
+    #
+    # This class maintains an array of intervals for each weekday
+    #
+    # This class will never match multi-day events, as it assumes each event starts and ends within the same day
+    #
+    class Weekly
+
+      # wdays is a 7-element array of Daily instances
+      #
+      # the zeroth element corresponds to Sunday, because Time#wday behaves that way.
+      #
+      attr_accessor :wdays
+
+      # pattern is an array of the form
+      #
+      #  [ { "day" => "wed", "start" => "0930", "finish" => "10:30"},
+      #    { "day" => "wed", "start" => "18",   "finish" => "20"   },
+      #    { "day" => "tue", "start" => "7",    "finish" => "8h30" }  ]
+      #
+      # see HourMinute#parse for how "start" and "finish" values are read
+      #
+      def initialize pattern
+        self.wdays = (0..6).map { |i| Daily.new(i) }
+
+        pattern.each { |interval_spec|
+          wday   = DAY_MAP[interval_spec["day"]]
+          raise "unrecognised day #{spec["day"].inspect} in #{pattern.inspect}" if wday.nil?
+
+          start  = HourMinute.parse interval_spec["start"]
+          finish = HourMinute.parse interval_spec["finish"]
+          wdays[wday].add Interval.new(start, finish)
+        }
+      end
+
+      # true if there exists a Daily corresponding to this event's weekday, with
+      # an Interval corresponding to this event's start and finish times;
+      # false otherwise
+      #
+      def matches? event
+        return false if event.start.day != event.finish.day
+        wdays[event.start.wday].matches? event
+      end
+
+      def to_s
+        wdays.map(&:to_s).join "\n"
+      end
+    end
   end
 end
