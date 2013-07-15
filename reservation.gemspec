@@ -9,6 +9,7 @@ Gem::Specification.new do |gem|
   gem.name          = "reservation"
   gem.version       = Reservation::VERSION
   gem.authors       = ["Conan Dalton"]
+  gem.license       = 'MIT'
   gem.email         = ["conan@conandalton.net"]
   gem.description   = %q{A very basic reservation system using ActiveRecord}
   gem.summary       = %q{A very basic reservation system using ActiveRecord}
