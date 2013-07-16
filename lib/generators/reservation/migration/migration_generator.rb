@@ -17,6 +17,6 @@ class Reservation::MigrationGenerator < Rails::Generators::Base
   end
 
   def create_migration_file
-    migration_template 'migration.rb', 'db/migrate/create_reservations_tables.rb'
+    migration_template 'migration.rb', 'db/migrate/create_reservations.rb'
   end
 end
