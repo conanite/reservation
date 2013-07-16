@@ -1,8 +1,7 @@
-
 require 'rails/generators'
 require 'rails/generators/migration'
 
-class ReservationsGenerator < Rails::Generators::Base
+class Reservation::MigrationGenerator < Rails::Generators::Base
   include Rails::Generators::Migration
 
   def self.source_root

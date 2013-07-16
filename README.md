@@ -23,6 +23,10 @@ Or install it yourself as:
 
 ## Usage
 
+First of all migrate your schema so you have the necessary tables -
+
+    rails g reservation:migration
+
 Objects associated with an event are called "subjects"; each event has many subjects, via an association
 model called Reservation::Reservation. The simplest way to create a bunch of events is to use Event#create_weekly.
 This will create a set of events, with the given subjects, within the given constraints, repeating weekly.
