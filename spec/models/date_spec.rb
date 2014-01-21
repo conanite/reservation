@@ -232,6 +232,8 @@ describe Date do
       expect(d.nth_day_of_month?(-3)).to be_false
       expect(d.nth_day_of_month?(-2)).to be_false
       expect(d.nth_day_of_month?(-1)).to be_true
+
+      expect { d.nth_day_of_month?(0) }.to raise_error(ArgumentError)
     end
   end
 end

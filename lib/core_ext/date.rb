@@ -21,7 +21,7 @@ class Date
     when -1
       nth_last_day_of_month == n
     when 0
-      raise ArgumentError("must be non-zero integer")
+      raise ArgumentError.new("must be non-zero integer")
     when 1
       nth_day_of_month == n
     end

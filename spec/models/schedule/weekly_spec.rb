@@ -56,6 +56,38 @@ Fri,20130719T1000 20130719T1145
 Tue,20130723T0700 20130723T0830"
   end
 
+  it "should generate events for the fourth-last and second-last friday of each month" do
+    weekly = Reservation::Schedule::Weekly.new [ { "day" => "fri", "start" => "10h",   "finish" => "11:45", "nth_of_month" => "-4" },
+                                                 { "day" => "fri", "start" => "10h",   "finish" => "11:45", "nth_of_month" => "-2" } ]
+
+    events = weekly.generate date("2013-01-01"), date("2013-12-31")
+    events.map { |e| "#{e.start.prettyd} #{e.finish.pretty}"}.join("\n").
+      should == "Fri,20130104T1000 20130104T1145
+Fri,20130118T1000 20130118T1145
+Fri,20130201T1000 20130201T1145
+Fri,20130215T1000 20130215T1145
+Fri,20130308T1000 20130308T1145
+Fri,20130322T1000 20130322T1145
+Fri,20130405T1000 20130405T1145
+Fri,20130419T1000 20130419T1145
+Fri,20130510T1000 20130510T1145
+Fri,20130524T1000 20130524T1145
+Fri,20130607T1000 20130607T1145
+Fri,20130621T1000 20130621T1145
+Fri,20130705T1000 20130705T1145
+Fri,20130719T1000 20130719T1145
+Fri,20130809T1000 20130809T1145
+Fri,20130823T1000 20130823T1145
+Fri,20130906T1000 20130906T1145
+Fri,20130920T1000 20130920T1145
+Fri,20131004T1000 20131004T1145
+Fri,20131018T1000 20131018T1145
+Fri,20131108T1000 20131108T1145
+Fri,20131122T1000 20131122T1145
+Fri,20131206T1000 20131206T1145
+Fri,20131220T1000 20131220T1145"
+  end
+
   it "should filter a set of events" do
     weekly = Reservation::Schedule::Weekly.new [ { "day" => "wed", "start" => "0930", "finish" => "10:30"},
                                                  { "day" => "wed", "start" => "18",   "finish" => "20"   },
