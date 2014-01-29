@@ -24,6 +24,10 @@ module Reservation
         new HourMinute.parse(start), HourMinute.parse(finish)
       end
 
+      def self.parse intervals
+        intervals.split(',').map { |i| self.from(*i.split('-')) }
+      end
+
       def to_s
         "#{start}-#{finish}"
       end

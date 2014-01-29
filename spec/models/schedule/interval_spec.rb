@@ -34,4 +34,12 @@ describe Reservation::Schedule::Interval do
     event.start.pretty.should  == "20130712T1830"
     event.finish.pretty.should == "20130712T2300"
   end
+
+  it "should parse a text list of intervals" do
+    intervals = Reservation::Schedule::Interval.parse "9h-12, 12h30-13:30 , 14-17.30"
+    intervals[0].to_s.should == "0900-1200"
+    intervals[1].to_s.should == "1230-1330"
+    intervals[2].to_s.should == "1400-1730"
+    intervals.size.should == 3
+  end
 end
