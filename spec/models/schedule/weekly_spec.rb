@@ -28,11 +28,38 @@ describe Reservation::Schedule::Weekly do
     weekly.matches?(event).should be_true
   end
 
+  it "should match when there exists a matching interval on the same day as the given event and the day is given as numeric" do
+    weekly = Reservation::Schedule::Weekly.new [ { "day" => "3", "start" => "0930", "finish" => "10:30"},
+                                                 { "day" => "3", "start" => "18",   "finish" => "20"   },
+                                                 { "day" => "5", "start" => "7h",   "finish" => "9:30" },
+                                                 { "day" => "2", "start" => "7",    "finish" => "8h30" }  ]
+
+    weekly.matches?(event).should be_true
+  end
+
+  it "should match when there exists a matching interval on the same day as the given event and the day is given as numeric and intervals as a list" do
+    weekly = Reservation::Schedule::Weekly.new [ { "day" => "3", "intervals" => "7-830, 9h00-12:30,13-1730" },
+                                                 { "day" => "3", "intervals" => "7-830, 9h00-12:30,13-1730" },
+                                                 { "day" => "5", "intervals" => "9h00-12:30,7-930,13-1730 " },
+                                                 { "day" => "2", "intervals" => "7-830, 9h00-12:30,13-1730" }  ]
+
+    weekly.matches?(event).should be_true
+  end
+
   it "should not match when there exists no matching interval on the same day as the given event" do
     weekly = Reservation::Schedule::Weekly.new [ { "day" => "wed", "start" => "0930", "finish" => "10:30"},
                                                  { "day" => "wed", "start" => "18",   "finish" => "20"   },
                                                  { "day" => "fri", "start" => "7h",   "finish" => "8:30" },
                                                  { "day" => "tue", "start" => "7",    "finish" => "8h30" }  ]
+
+    weekly.matches?(event).should be_false
+  end
+
+  it "should not match when there exists a matching interval on the same day as the given event and the day is given as numeric and intervals as a list" do
+    weekly = Reservation::Schedule::Weekly.new [ { "day" => "3", "intervals" => "7-830, 9h00-12:30,13-1730" },
+                                                 { "day" => "3", "intervals" => "7-830, 9h00-12:30,13-1730" },
+                                                 { "day" => "5", "intervals" => "9h00-12:30,7-1130,13-1730 " },
+                                                 { "day" => "2", "intervals" => "7-830, 9h00-12:30,13-1730" }  ]
 
     weekly.matches?(event).should be_false
   end

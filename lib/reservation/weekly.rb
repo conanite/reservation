@@ -30,11 +30,18 @@ module Reservation
 
         patterns.each { |pattern|
           day = pattern["day"]
+          dayno = (day =~ /\d+/) ? day.to_i : DAY_MAP[day]
+
           nth_of_month = parse_nth_of_month pattern["nth_of_month"]
 
-          start  = HourMinute.parse pattern["start"]
-          finish = HourMinute.parse pattern["finish"]
-          self.wdays << Daily.new(DAY_MAP[day], nth_of_month, Interval.new(start, finish))
+          if pattern["intervals"]
+            intervals = Interval.parse(pattern["intervals"])
+            self.wdays.concat intervals.map { |i| Daily.new(dayno, nth_of_month, i) }
+          else
+            start  = HourMinute.parse pattern["start"]
+            finish = HourMinute.parse pattern["finish"]
+            self.wdays << Daily.new(dayno, nth_of_month, Interval.new(start, finish))
+          end
         }
       end
 
