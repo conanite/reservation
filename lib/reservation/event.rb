@@ -5,7 +5,6 @@ class Reservation::Event < ActiveRecord::Base
   extend Reservation::EventFilter
 
   has_many :reservations, :class_name => "Reservation::Reservation", :inverse_of => :event
-  attr_accessible :finish, :start, :title
 
   scope :since, lambda { |time| where("reservation_events.finish > ?", time) }
   scope :upto,  lambda { |time| where("reservation_events.start  < ?", time) }

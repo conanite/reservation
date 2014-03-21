@@ -38,10 +38,8 @@ RSpec::Core::ExampleGroup.send :include, Helper
 File.delete File.dirname(__FILE__) + '/dummy/db/test.sqlite3'
 ActiveRecord::Base.establish_connection
 ActiveRecord::Base.connection
-ActiveRecord::Base.silence do
-  ActiveRecord::Migration.verbose = false
-  load(File.dirname(__FILE__) + '/dummy/db/schema.rb')
-end
+ActiveRecord::Migration.verbose = false
+load(File.dirname(__FILE__) + '/dummy/db/schema.rb')
 
 class Time
   def pretty
@@ -52,4 +50,3 @@ class Time
     self.strftime("%a,%Y%m%dT%H%M")
   end
 end
-

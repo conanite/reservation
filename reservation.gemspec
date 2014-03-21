@@ -15,11 +15,11 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{A very basic reservation system using ActiveRecord}
   gem.homepage      = "http://github.com/conanite/reservation"
 
-  gem.add_dependency             "rails", "~> 3.0"
-  gem.add_dependency             'activerecord', '~> 3.0'
+  gem.add_dependency             "rails", ">= 4.0"
+  gem.add_dependency             'activerecord', '>= 4.0'
   gem.add_dependency             'icalendar'
 
-  gem.add_development_dependency 'rspec', '~> 2.9'
+  gem.add_development_dependency 'rspec', '>= 2.9'
   gem.add_development_dependency "sqlite3"
   gem.add_development_dependency 'rspec_numbering_formatter'
 
